@@ -7,3 +7,13 @@ module.exports.DB_PATH = NODE_ENV === 'production' ? MONGO_PATH : 'mongodb://127
 module.exports.PORT = NODE_ENV === 'production' ? MONGO_PORT : 3000;
 module.exports.EXPIRE_TOKEN = '7d';
 module.exports.saltRounds = 10;
+module.exports.corsOptions = {
+  origin: [
+    'http://localhost:3000',
+    'http://movies.explorer.diplom.nomoredomains.sbs',
+    'https://movies.explorer.diplom.nomoredomains.sbs',
+    'http://api.movies.explorer.diplom.nomoredomains.sbs',
+    'https://api.movies.explorer.diplom.nomoredomains.sbs',
+    'https://maxiair1.github.io',
+  ],
+};

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const cors = require('cors');
 
 const userRouter = require('./routes/users');
 const movieRouter = require('./routes/movies');
@@ -12,7 +13,7 @@ const { login } = require('./controllers/login');
 const { auth } = require('./middlewares/auth');
 const { loginValidation, createUserValidation } = require('./middlewares/joiValidation');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { DB_PATH, PORT } = require('./utils/devConst');
+const { DB_PATH, PORT, corsOptions } = require('./utils/devConst');
 
 const app = express();
 
@@ -20,6 +21,7 @@ mongoose.connect(DB_PATH)
   .then(() => console.log('filmDB connected'))
   .catch((err) => console.log(`cant connect to filmDB: ${err.message}`));
 
+app.use('*', cors(corsOptions));
 app.use(helmet());
 app.use(limiter);
 app.use(bodyParser.json());
