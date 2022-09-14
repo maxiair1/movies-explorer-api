@@ -1,5 +1,4 @@
 const Movie = require('../models/movie');
-const ServerError = require('../errors/ServerError');
 const RequestNotCorrectError = require('../errors/RequestNotCorrectError');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenActionError = require('../errors/ForbiddenActionError');
@@ -42,7 +41,7 @@ module.exports.createMovie = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new RequestNotCorrectError('Переданы некорректные данные при создании фильма 1.'));
       }
-      next(new ServerError('Ошибка по умолчанию.'));
+      next(err);
     });
 };
 
@@ -53,8 +52,8 @@ module.exports.getMovies = (req, res, next) => {
   */
   Movie.find({ owner: req.user._id.toString() })
     .then((movies) => res.send(movies))
-    .catch(() => {
-      next(new ServerError('Ошибка по умолчанию.'));
+    .catch((err) => {
+      next(err);
     });
 };
 
@@ -72,7 +71,7 @@ module.exports.deleteMovie = (req, res, next) => {
       if (movie.owner.toString() !== req.user._id) {
         throw new ForbiddenActionError('попытка удалить чужой фильм');
       }
-      return Movie.deleteOne({ _id: movie._id.toString() });
+      return movie.remove();
     })
     .then((deletedMovie) => {
       res.send(deletedMovie);
@@ -80,12 +79,8 @@ module.exports.deleteMovie = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new RequestNotCorrectError('Переданы некорректные данные для удаления фильма 2.'));
-      } else if (err.name === 'NotFoundError') {
-        next(err);
-      } else if (err.name === 'ForbiddenActionError') {
-        next(err);
       } else {
-        next(new ServerError('Ошибка по умолчанию.'));
+        next(err);
       }
     });
 };

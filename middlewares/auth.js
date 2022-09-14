@@ -3,7 +3,6 @@ const RequestDataError = require('../errors/RequestDataError');
 
 const auth = (req, res, next) => {
   const authToken = req.headers.authorization;
-  // console.log('auth: ', authToken);
   if (!authToken) {
     throw new RequestDataError('передан неверный логин или пароль3');
   }
